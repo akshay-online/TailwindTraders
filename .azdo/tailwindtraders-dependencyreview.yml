@@ -1,0 +1,43 @@
+trigger: none   
+
+pr:
+  branches:
+    exclude:
+      - main
+      
+variables:
+  resource-group: "ghazdo-workshops"
+  BuildConfiguration: "Release"
+  BuildPlatform: "any cpu"
+  Parameters.RestoreBuildProjects: "**/*.csproj"
+  Parameters.TestProjects: "**/*[Tt]ests/*.csproj"
+  webapp_name: tailwind-github-demo
+  advancedsecurity.submittoadvancedsecurity: true
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: 'Build'
+  displayName: 'Build'
+  jobs:
+  - job: 
+    displayName: 'Build on Windows'
+    steps:
+
+
+    - task: AdvancedSecurity-Dependency-Scanning@1
+      displayName: 'Dependency Scanning'
+
+    - task: AdvancedSecurity-Publish@1
+      displayName: 'Dependency Publish'
+
+    - task: PowerShell@2
+      inputs:
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+        filePath: '.azdo/dependencyreview.ps1'
+        arguments: '-isInBuild $true'
+        failOnStderr: true
+        pwsh: true
+      env:
+        SYSTEM_ACCESSTOKEN: $(System.AccessToken)

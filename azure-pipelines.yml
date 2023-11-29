@@ -1,0 +1,43 @@
+trigger:
+- main
+
+variables:
+  resource-group: "ghazdo-workshops"
+  BuildConfiguration: "Release"
+  BuildPlatform: "any cpu"
+  Parameters.RestoreBuildProjects: "**/*.csproj"
+  Parameters.TestProjects: "**/*[Tt]ests/*.csproj"
+  webapp_name: tailwind-github-demo
+  advancedsecurity.submittoadvancedsecurity: true
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: 'AdvancedSecurityScan'
+  displayName: 'Advanced Security'
+  jobs:
+  - job: 
+    displayName: 'Advanced Security Scanning'
+    steps:
+    
+    # Setup Node.js environment
+    - task: NodeTool@0
+      displayName: 'Use Node 10.16.3'
+      inputs:
+        versionSpec: 10.16.3
+    
+    # Initializes the CodeQL tools for scanning.
+    - task: AdvancedSecurity-Codeql-Init@1
+      inputs:
+        languages: 'csharp, javascript'
+
+    # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
+    - task: AdvancedSecurity-Codeql-Autobuild@1
+    
+    # Performs CodeQL Analysis
+    - task: AdvancedSecurity-Codeql-Analyze@1
+      
+    # Publish Results to Advance Security Dashboard
+    - task: AdvancedSecurity-Publish@1
+    

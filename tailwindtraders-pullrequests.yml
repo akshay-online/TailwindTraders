@@ -1,0 +1,57 @@
+trigger: none   
+
+pr:
+  branches:
+    exclude:
+      - main
+      
+variables:
+  resource-group: "ghazdo-workshops"
+  BuildConfiguration: "Release"
+  BuildPlatform: "any cpu"
+  Parameters.RestoreBuildProjects: "**/*.csproj"
+  Parameters.TestProjects: "**/*[Tt]ests/*.csproj"
+  webapp_name: tailwind-github-demo
+  advancedsecurity.submittoadvancedsecurity: true
+
+pool:
+  vmImage: windows-latest
+
+stages:
+- stage: 'Build'
+  displayName: 'Build'
+  jobs:
+  - job: 
+    displayName: 'Build on Windows'
+    steps:
+    - task: NodeTool@0
+      displayName: 'Use Node 10.16.3'
+      inputs:
+        versionSpec: 10.16.3
+
+    - task: AdvancedSecurity-Dependency-Scanning@1
+      displayName: 'Dependency Scanning'
+    
+    - task: Npm@1
+      displayName: 'npm install'
+      inputs:
+        workingDir: TailwindTraders.Website/Source/Tailwind.Traders.Web/ClientApp
+        verbose: false
+
+    - task: AdvancedSecurity-Codeql-Init@1
+      inputs:
+        languages: 'csharp, javascript'
+
+    - task: AdvancedSecurity-Codeql-Autobuild@1
+    
+    - task: AdvancedSecurity-Codeql-Analyze@1
+
+    - task: AdvancedSecurity-Publish@1
+      displayName: 'Dependency Publish'
+    
+    - task: DotNetCoreCLI@2
+      displayName: Test
+      inputs:
+        command: test
+        projects: '$(Parameters.TestProjects)'
+        arguments: '--configuration $(BuildConfiguration)'
