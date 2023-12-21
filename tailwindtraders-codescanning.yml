@@ -28,6 +28,10 @@ stages:
         versionSpec: 10.16.3
 
     # Initializes the CodeQL tools for scanning.
+    - task: AdvancedSecurity-Codeql-Init@1
+    - task: AdvancedSecurity-Codeql-Autobuild@1
+    - task: AdvancedSecurity-Codeql-Analyze@1
+    - task: AdvancedSecurity-Publish@1
 
     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
     
