@@ -44,9 +44,11 @@ stages:
         arguments: '--configuration $(BuildConfiguration)'
 
     # Performs Dependency Scanning
-      
-    # Publish Results to Advance Security Dashboard
+    - task: AdvancedSecurity-Dependency-Scanning@1
+      displayName: 'Dependency Scanning'
     
+    # Publish Results to Advance Security Dashboard
+    - task: AdvancedSecurity-Publish@1
     - task: DotNetCoreCLI@2
       displayName: Test
       inputs:
