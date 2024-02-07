@@ -29,6 +29,9 @@ stages:
 
     # Initializes the CodeQL tools for scanning.
     - task: AdvancedSecurity-Codeql-Init@1
+      inputs:
+        languages: 'csharp'
+        querysuite: 'code-scanning'
     - task: AdvancedSecurity-Codeql-Autobuild@1
     - task: AdvancedSecurity-Codeql-Analyze@1
     - task: AdvancedSecurity-Dependency-Scanning@1
