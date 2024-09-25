@@ -86,4 +86,4 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Secret scanning
-      uses: github/secret-scanning@v1
+      uses: github/secret-scanning@v2
